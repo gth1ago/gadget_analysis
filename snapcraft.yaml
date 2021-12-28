@@ -1,0 +1,51 @@
+name: pc
+version: '20-0.4'
+type: gadget
+base: core20
+summary: PC gadget - research
+description: |
+    This gadget is for use in cmdline modify and use phoronix
+confinement: strict
+grade: stable
+icon: icon.png
+
+parts:
+  grub-prepare:
+    plugin: nil
+    build-snaps: [snapd/latest/edge]
+    stage-packages:
+      - grub-efi-amd64-signed
+      - grub-pc-bin
+      - shim-signed
+      - sbsigntool
+    prime: [ -* ]
+  grub:
+    source: .
+    build-packages:
+      - grub-common
+    override-build: |
+        snapcraftctl build
+        cp cmdline.extra $SNAPCRAFT_PART_INSTALL/
+    plugin: make
+    after: [grub-prepare]
+
+  phoronix-test-suite:
+    plugin: nil
+    source: https://github.com/phoronix-test-suite/phoronix-test-suite.git
+    build-packages:
+      - wget
+    stage-packages: 
+      - php-cli
+      - php-xml
+    override-build: |
+      snapcraftctl build
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp $SNAPCRAFT_PART_BUILD/phoronix-test-suite $SNAPCRAFT_PART_INSTALL/bin/phoronix-test-suite
+
+apps:
+  phoronix-test-suite:
+    command: bin/phoronix-test-suite
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/local/lib
+    plugs:
+      - home
