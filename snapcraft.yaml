@@ -42,6 +42,19 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cp $SNAPCRAFT_PART_BUILD/phoronix-test-suite $SNAPCRAFT_PART_INSTALL/bin/phoronix-test-suite
 
+  lmbench:
+    plugin: nil
+    source: https://github.com/intel/lmbench.git
+    stage-packages:
+      - gcc
+      - perl
+      - libc6-dev
+      - libc6
+#    override-build: |
+#      snapcraftctl build
+#      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+#      cp $SNAPCRAFT_PART_BUILD/lmbench $SNAPCRAFT_PART_INSTALL/bin/lmbench
+
 apps:
   phoronix-test-suite:
     command: bin/phoronix-test-suite
@@ -49,3 +62,10 @@ apps:
       LD_LIBRARY_PATH: $SNAP/usr/local/lib
     plugs:
       - home
+
+#  lmbench:
+#    command: 
+#    environment:
+#      LD_LIBRARY_PATH: $SNAP/usr/local/lib
+#    plugs:
+#      - home
